@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        .notifications-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .notification-card {
+            background: var(--background-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .notification-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
+
+        .notification-card.unread {
+            background: #f0f9ff;
+            border-left-color: #2563eb;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .notification-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .notification-icon .material-icons-outlined {
+            font-size: 1.5rem;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-dark);
+        }
+
+        .notification-message {
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .notification-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .notification-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .unread-badge {
+            background: #2563eb;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state .material-icons-outlined {
+            font-size: 5rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .filter-tab {
+            padding: 0.8rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-medium);
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab:hover {
+            color: var(--primary-color);
+        }
+
+        .filter-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .notification-actions {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .notification-actions button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { currentPage: 'notifications', username: username }) %>
+        <main class="main-content">
+            <h1>
+                <span class="material-icons-outlined" style="font-size: 2.5rem; vertical-align: middle; margin-right: 10px;">notifications</span>
+                Notifications
+            </h1>
+
+            <div class="notifications-container">
+                <div class="card">
+                    <h3>Stay Updated</h3>
+                    <p>Important announcements, updates, and messages from your instructors and administrators.</p>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterNotifications('all')">
+                        All Notifications
+                    </button>
+                    <button class="filter-tab" onclick="filterNotifications('unread')">
+                        Unread
+                    </button>
+                    <button class="filter-tab" onclick="filterNotifications('read')">
+                        Read
+                    </button>
+                </div>
+
+                <% if (notifications && notifications.length > 0) { %>
+                    <% notifications.forEach(notification => { %>
+                    <div class="notification-card <%= notification.read_status ? '' : 'unread' %>" 
+                        data-status="<%= notification.read_status ? 'read' : 'unread' %>" 
+                        data-id="<%= notification.id %>">
+
+                        <div class="notification-header">
+                            <div class="notification-icon">
+                                <span class="material-icons-outlined">campaign</span>
+                            </div>
+
+                            <div class="notification-content">
+                                <h4 class="notification-title">
+                                    <%= notification.title %>
+
+                                    <% if (!notification.read_status) { %>
+                                        <span class="unread-badge">New</span>
+                                    <% } %>
+                                </h4>
+
+                                <p class="notification-message"><%= notification.message %></p>
+
+                                <div class="notification-meta">
+                                    <span>
+                                        <span class="material-icons-outlined" style="font-size: 1rem;">person</span>
+                                        From <%= notification.admin_name || 'Admin' %>
+                                    </span>
+                                    <span>•</span>
+                                    <span>
+                                        <span class="material-icons-outlined" style="font-size: 1rem;">schedule</span>
+                                        <%= new Date(notification.created_at).toLocaleDateString('en-US', { 
+                                            month: 'short', 
+                                            day: 'numeric', 
+                                            year: 'numeric', 
+                                            hour: '2-digit', 
+                                            minute: '2-digit' 
+                                        }) %>
+                                    </span>
+                                </div>
+
+                                <% if (!notification.read_status) { %>
+                                    <div class="notification-actions">
+                                        <button class="button secondary-btn"
+                                            onclick="markAsRead('<%= notification.id %>')">
+                                            <span class="material-icons-outlined" style="font-size: 1rem;">done</span>
+                                            Mark as Read
+                                        </button>
+                                    </div>
+                                <% } %>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <% }); %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <span class="material-icons-outlined">notifications_none</span>
+                        <h3>No Notifications</h3>
+                        <p>You're all caught up! Check back later for new updates.</p>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        function filterNotifications(filter) {
+            const cards = document.querySelectorAll('.notification-card');
+            const tabs = document.querySelectorAll('.filter-tab');
+            
+            // Update active tab
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter cards
+            cards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else if (filter === 'unread') {
+                    card.style.display = card.dataset.status === 'unread' ? 'block' : 'none';
+                } else if (filter === 'read') {
+                    card.style.display = card.dataset.status === 'read' ? 'block' : 'none';
+                }
+            });
+        }
+
+        function markAsRead(notificationId) {
+            fetch(`/notifications/${notificationId}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const card = document.querySelector(`[data-id="${notificationId}"]`);
+                    if (card) {
+                        card.classList.remove('unread');
+                        card.dataset.status = 'read';
+                        const badge = card.querySelector('.unread-badge');
+                        if (badge) badge.remove();
+                        const actionsDiv = card.querySelector('.notification-actions');
+                        if (actionsDiv) actionsDiv.remove();
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Check for new notifications periodically (optional)
+        setInterval(() => {
+            fetch('/api/notifications/unread-count')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.count > 0) {
+                        // You can show a badge or notification here
+                        console.log(`${data.count} new notifications`);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }, 60000); // Check every minute
+    </script>
+    <script src="/script.js"></script>
+</body>
+</html>

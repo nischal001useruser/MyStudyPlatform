@@ -1,0 +1,166 @@
+<% let unreadNotifications = (typeof locals.unreadNotifications !== 'undefined') ? locals.unreadNotifications : 0; %>
+
+<aside class="sidebar">
+    <a href="/dashboard" class="logo">Study Flow</a>
+    <nav>
+        <ul>
+            <li><a href="/dashboard" class="<%= currentPage === 'home' ? 'active' : '' %>"><span class="material-icons-outlined">home</span> Home</a></li>
+            <li><a href="/focus-mode" class="<%= currentPage === 'focus-mode' ? 'active' : '' %>"><span class="material-icons-outlined">timer</span> Focus Mode</a></li>
+            <li><a href="/my-tasks" class="<%= currentPage === 'my-tasks' ? 'active' : '' %>"><span class="material-icons-outlined">task</span> My Tasks</a></li>
+            
+            <!-- Notes & Materials with subgroup -->
+            <li><a href="/notes-materials" class="<%= ['notes-materials', 'platform-materials'].includes(currentPage) ? 'active' : '' %>"><span class="material-icons-outlined">description</span> Notes & Materials</a></li>
+            <% if (['notes-materials', 'platform-materials'].includes(currentPage)) { %>
+            <li class="submenu">
+                <ul>
+                    <li><a href="/notes-materials" class="<%= currentPage === 'notes-materials' ? 'active' : '' %>"><span class="material-icons-outlined">note</span> My Notes</a></li>
+                    <li><a href="/platform-materials" class="<%= currentPage === 'platform-materials' ? 'active' : '' %>"><span class="material-icons-outlined">library_books</span> Platform Materials</a></li>
+                </ul>
+            </li>
+            <% } %>
+            
+            <li><a href="/ask-a-question" class="<%= currentPage === 'ask-a-question' ? 'active' : '' %>"><span class="material-icons-outlined">forum</span> Ask a Question</a></li>
+            <li><a href="/study-buddies" class="<%= currentPage === 'study-buddies' ? 'active' : '' %>"><span class="material-icons-outlined">people</span> Study Buddies</a></li>
+            <li><a href="/leaderboard" class="<%= currentPage === 'leaderboard' ? 'active' : '' %>"><span class="material-icons-outlined">leaderboard</span> Leaderboard</a></li>
+            <li><a href="/settings" class="<%= currentPage === 'settings' ? 'active' : '' %>"><span class="material-icons-outlined">settings</span> Settings</a></li>
+            <li><a href="/logout" class="<%= currentPage === 'logout' ? 'active' : '' %>"><span class="material-icons-outlined">logout</span> Logout</a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- Floating Notification Button -->
+<a href="/notifications" class="floating-notification-btn" title="Notifications">
+    <span class="material-icons-outlined">notifications</span>
+    <span id="notif-badge" class="notif-badge-float" style="<%= unreadNotifications > 0 ? '' : 'display:none;' %>">
+        <%= unreadNotifications %>
+    </span>
+</a>
+
+<style>
+/* Fix for multiple scrollbars */
+html, body {
+    height: 100%;
+    overflow: hidden; /* Prevent body scroll */
+}
+
+.dashboard-wrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden; /* Prevent wrapper scroll */
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto; /* Only main-content should scroll */
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Submenu styling */
+.sidebar nav ul li.submenu {
+    margin-left: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 0;
+}
+
+.sidebar nav ul li.submenu ul {
+    list-style: none;
+    padding: 0.5rem 0;
+    margin: 0;
+}
+
+.sidebar nav ul li.submenu ul li {
+    margin: 0;
+}
+
+.sidebar nav ul li.submenu ul li a {
+    padding: 0.8rem 1.5rem 0.8rem 3rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar nav ul li.submenu ul li a:hover {
+    background-color: rgba(76, 175, 80, 0.3);
+    color: white;
+}
+
+.sidebar nav ul li.submenu ul li a.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-left: none;
+    padding-left: 3rem;
+}
+
+.sidebar nav ul li.submenu ul li a .material-icons-outlined {
+    font-size: 1.2rem;
+    margin-right: 8px;
+}
+
+/* Floating Notification Button */
+.floating-notification-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 999;
+    text-decoration: none;
+}
+
+.floating-notification-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
+}
+
+.floating-notification-btn .material-icons-outlined {
+    color: white;
+    font-size: 1.8rem;
+}
+
+.notif-badge-float {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #f44336;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(244, 67, 54, 0.4);
+    animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .floating-notification-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 55px;
+        height: 55px;
+    }
+    
+    .floating-notification-btn .material-icons-outlined {
+        font-size: 1.6rem;
+    }
+}
+</style>

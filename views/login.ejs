@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login • Study Flow</title>
+
+  <!-- Your existing global styles -->
+  <link rel="stylesheet" href="/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+  <style>
+    /* ————— Beautiful Login Page Styles (unchanged from before) ————— */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated background blobs (unchanged) */
+    body::before,
+    body::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: float 20s infinite linear;
+    }
+    body::before {
+      width: 600px; height: 600px;
+      background: #4CAF50;
+      top: -150px; left: -150px;
+    }
+    body::after {
+      width: 800px; height: 800px;
+      background: #FFC107;
+      bottom: -200px; right: -200px;
+      animation-delay: -10s;
+    }
+    @keyframes float {
+      0%   { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(100px, 100px) rotate(360deg); }
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      width: 420px;
+      max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-header {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #4CAF50, #81C784);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      color: #555;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .google-btn-wrapper {
+      margin: 2rem 0;
+    }
+
+    /* Keep Google’s default button but make it bigger & prettier */
+    .g_id_signin {
+      transform: scale(1.15);
+    }
+
+    .illustration {
+      width: 180px;
+      margin: 1.5rem auto;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+    }
+
+    .tagline {
+      font-size: 0.95rem;
+      color: #777;
+      margin-top: 1.5rem;
+    }
+
+    /* Responsive (unchanged) */
+    @media (max-width: 480px) {
+      .login-container { padding: 2rem 1.5rem; }
+      .logo-header { font-size: 2.4rem; }
+      .g_id_signin { transform: scale(1); }
+    }
+
+    /* ————— Redesigned Footer Styles ————— */
+    /* Modern, cool footer with animations, aligned to site colors (--primary-color: #4CAF50 green, --accent-color: #FFC107 amber) */
+    .cool-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 1rem 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.1) 0%, transparent 100%); /* Subtle gradient fade */
+      text-align: center;
+      color: rgba(92, 221, 105, 0.8);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      z-index: 1; /* Above blobs */
+      animation: slideUpFooter 1s ease-out 0.5s forwards; /* Slide in after page load */
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes slideUpFooter {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cool-footer span {
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .cool-footer:hover span {
+      color: #4CAF50; /* Primary green on hover */
+      text-shadow: 0 0 8px rgba(76,175,80,0.6); /* Glow effect */
+    }
+
+    .cool-footer .heart {
+      color: #FFC107; /* Accent amber */
+      animation: pulseHeart 1.5s infinite ease-in-out;
+      margin: 0 4px;
+    }
+
+    @keyframes pulseHeart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .cool-footer a {
+      color: inherit;
+      text-decoration: none;
+      margin: 0 8px;
+      position: relative;
+    }
+
+    .cool-footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #4CAF50;
+      transition: width 0.3s ease;
+    }
+
+    .cool-footer a:hover::after {
+      width: 100%;
+    }
+
+    /* Add subtle wave animation to the entire footer on load */
+    .cool-footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      opacity: 0;
+      animation: waveRipple 4s infinite ease-out;
+    }
+
+    @keyframes waveRipple {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <!-- Logo + Title -->
+    <h1 class="logo-header">Study Flow</h1>
+    <p class="subtitle">Your all-in-one study companion</p>
+
+    <!-- Cute illustration (you can replace with your own SVG) -->
+    <img src="/images/student-working.svg" alt="Student studying" class="illustration">
+
+    <h2 style="margin: 1.5rem 0 0.5rem; font-size: 1.5rem;">Welcome back!</h2>
+    <p style="color:#666; margin-bottom:1.5rem;">
+      Sign in with Google to continue your journey
+    </p>
+
+    <% if (error) { %>
+      <div style="background:#fee; color:#c33; padding:0.8rem; color:#c33; border-radius:8px; margin:1rem 0;">
+        <%= error %>
+      </div>
+    <% } %>
+
+    <!-- Google Sign-In Button (kept exactly as before so it still works) -->
+    <div id="g_id_onload"
+         data-client_id="<%= GOOGLE_CLIENT_ID %>"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="handleGoogleLogin"
+         data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="pill"
+         data-theme="outline"
+         data-text="signin_with"
+         data-size="large"
+         data-logo_alignment="left">
+    </div>
+
+    <p class="tagline">Focus better • Learn faster • Achieve more</p>
+  </div>
+
+  <!-- Redesigned Cool Footer -->
+  <footer class="cool-footer">
+    <span>© 2024 Study Flow</span> 
+    <span class="heart">❤️</span> 
+    <span>Made with passion for students</span>
+    <!-- Optional: Add links for extra coolness -->
+    <!-- <a href="/privacy">Privacy</a> • <a href="/terms">Terms</a> -->
+  </footer>
+
+  <!-- Google One Tap / Sign-in script (unchanged) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    function handleGoogleLogin(response) {
+      fetch('/google-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: response.credential })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) location.href = data.redirect;
+        else alert('Login failed: ' + data.error);
+      })
+      .catch(() => alert('Network error. Try again.'));
+    }
+  </script>
+</body>
+</html>

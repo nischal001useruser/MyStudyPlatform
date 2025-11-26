@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Buddies - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { currentPage: 'study-buddies', username: username }) %>
+        <main class="main-content">
+            <h1><span class="material-icons-outlined" style="font-size: 2.5rem; vertical-align: middle; margin-right: 10px;">people</span> Study Buddies</h1>
+            <div class="card">
+                <h3>Find Your Study Partners</h3>
+                <p>Connect with other students, form study groups, and collaborate on projects.</p>
+                <div style="margin-top: 20px;">
+                    <p class="text-light">Search and connect functionality coming soon!</p>
+                    <a href="/dashboard" class="button secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('partials/footer') %>
+    <script src="/script.js"></script>
+</body>
+</html>

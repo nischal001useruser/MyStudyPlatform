@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tasks - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { currentPage: 'my-tasks', username: username }) %>
+        <main class="main-content">
+            <h1><span class="material-icons-outlined" style="font-size: 2.5rem; vertical-align: middle; margin-right: 10px;">task</span> My Tasks</h1>
+
+            <!-- Filter and Sort Controls -->
+            <div class="card filter-sort-controls">
+                <div class="control-group">
+                    <label for="filter-category">Category:</label>
+                    <select id="filter-category">
+                        <option value="all">All</option>
+                        <option value="School">School</option>
+                        <option value="Homework">Homework</option>
+                        <option value="Project">Project</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Revision">Revision</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="filter-priority">Priority:</label>
+                    <select id="filter-priority">
+                        <option value="all">All</option>
+                        <option value="0">None</option>
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="sort-by">Sort By:</label>
+                    <select id="sort-by">
+                        <option value="due_date_asc">Due Date (Soonest)</option>
+                        <option value="due_date_desc">Due Date (Latest)</option>
+                        <option value="priority_desc">Priority (High to Low)</option>
+                        <option value="priority_asc">Priority (Low to High)</option>
+                        <option value="created_desc">Newest First</option>
+                        <option value="created_asc">Oldest First</option>
+                    </select>
+                </div>
+                <div class="control-group checkbox-control">
+                    <label class="checkbox-container">Show Completed Tasks
+                        <input type="checkbox" id="show-completed-tasks" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="task-page-grid">
+                <!-- Add New Task Card -->
+                <div class="card add-task-card">
+                    <h3><span class="material-icons-outlined">add_circle_outline</span> Add New Task</h3>
+                    <form action="/add-task" method="POST" class="add-task-form">
+                        <div class="form-group">
+                            <label for="task-description">Task Description:</label>
+                            <input type="text" id="task-description" name="description" placeholder="e.g., Study for Math test" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-due-date">Due Date:</label>
+                            <input type="date" id="task-due-date" name="due_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="task-category">Category:</label>
+                            <select id="task-category" name="category">
+                                <option value="">Select Category</option>
+                                <option value="School">School</option>
+                                <option value="Homework">Homework</option>
+                                <option value="Project">Project</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Revision">Revision</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-priority">Priority:</label>
+                            <select id="task-priority" name="priority">
+                                <option value="0">None</option>
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="button">
+                            <span class="material-icons-outlined" style="font-size: 1.2rem; margin-right: 5px;">add</span>
+                            Add Task
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Container for dynamically rendered tasks (limited view) and the 'View More' button -->
+                <div id="tasks-list-container">
+                    <!-- Tasks will be rendered here by JavaScript -->
+                    <p class="text-light" id="no-tasks-message" style="display: none;">You haven't added any tasks yet or no tasks match your current filters. Use the form above to get started!</p>
+
+                    <!-- View More Button - now inside tasks-list-container -->
+                    <div class="view-more-tasks-wrapper" style="text-align: center; display: none;">
+                        <button id="view-all-tasks-btn" class="button secondary-button">
+                            <span class="material-icons-outlined">apps</span> View All Tasks
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- The Modal Structure -->
+    <div id="all-tasks-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button material-icons-outlined">close</span>
+            <h2>All My Tasks</h2>
+            <div class="modal-tasks-list grid-container" id="modal-tasks-list">
+                <!-- All tasks will be rendered here by JavaScript -->
+            </div>
+            <p class="text-light" id="no-modal-tasks-message" style="display: none; text-align: center;">No tasks to display in full view.</p>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+    <!-- Pass initial tasks data to JavaScript -->
+    <script>
+        const initialTasks = JSON.parse('<%- JSON.stringify(tasks) %>');
+        console.log("Initial Tasks loaded:", initialTasks); // Add this for debugging
+    </script>
+    <script src="/my-tasks-script.js"></script>
+</body>
+</html>

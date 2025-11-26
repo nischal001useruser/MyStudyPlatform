@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <!-- Google Fonts for Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Material Icons Outlined -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="/" class="logo">Study Flow</a>
+            <nav>
+                <ul>
+                    <li><a href="/dashboard" class="active"><span class="material-icons-outlined">home</span> Home</a></li>
+                    <li><a href="/focus-mode"><span class="material-icons-outlined">timer</span> Focus Mode</a></li>
+                    <li><a href="/my-tasks"><span class="material-icons-outlined">task</span> My Tasks</a></li>
+                    <li><a href="/notes-materials"><span class="material-icons-outlined">description</span> Notes & Materials</a></li>
+                    <li><a href="/ask-a-question"><span class="material-icons-outlined">forum</span> Ask a Question</a></li>
+                    <li><a href="/study-buddies"><span class="material-icons-outlined">people</span> Study Buddies</a></li>
+                    <li><a href="/leaderboard"><span class="material-icons-outlined">leaderboard</span> Leaderboard</a></li>
+                    <li><a href="/settings"><span class="material-icons-outlined">settings</span> Settings</a></li>
+                    <li><a href="/logout"><span class="material-icons-outlined">logout</span> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <h1>Dashboard</h1>
+
+            <div class="dashboard-grid">
+
+                <!-- Welcome Card -->
+                <div class="card dashboard-card-welcome">
+                    <div class="bg-pattern"></div>
+                    <h2><span class="material-icons-outlined">waving_hand</span> Welcome, <%= username %>!</h2>
+                    <p>This is your personal dashboard. All your study progress and materials are organized here.</p>
+                    <a href="/focus-mode" class="button">Start Focus Session</a>
+                </div>
+
+                <!-- Today's Overview Card -->
+                <div class="card dashboard-card-overview">
+                    <h3><span class="material-icons-outlined">visibility</span> Today's Overview</h3>
+                    <p>Upcoming tasks, study streaks, and quick stats will go here.</p>
+                    <p class="text-light">No active sessions or tasks due today.</p>
+                    <!-- Future content: e.g., task summary, streak count -->
+                </div>
+
+                <!-- Your Notes Card -->
+                <div class="card dashboard-card-note">
+                    <h3><span class="material-icons-outlined">sticky_note_2</span> Your Notes</h3>
+                    <form action="/add-note" method="POST" class="add-note-form">
+                        <div class="form-group">
+                            <input type="text" name="title" placeholder="Note Title" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="content" placeholder="Note content..." rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="button">
+                            <span class="material-icons-outlined" style="font-size: 1.2rem; margin-right: 5px;">add</span>
+                            Add Note
+                        </button>
+                    </form>
+                    <% if (notes && notes.length > 0) { %>
+                        <ul class="item-list">
+                            <% notes.forEach(note => { %>
+                                <li>
+                                    <div>
+                                        <strong><%= note.title %></strong>
+                                        <% if (note.content) { %>
+                                            <p style="margin: 0; font-size: 0.9em; color: var(--text-medium);"><%= note.content.substring(0, 50) %><% if (note.content.length > 50) { %>...<% } %></p>
+                                        <% } %>
+                                    </div>
+                                    <form action="/delete-note" method="POST" style="margin-left: auto;">
+                                        <input type="hidden" name="id" value="<%= note.id %>">
+                                        <button type="submit" class="delete-btn" title="Delete Note">
+                                            <span class="material-icons-outlined">delete_outline</span>
+                                        </button>
+                                    </form>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <p class="text-light" style="margin-top: 1.5rem;">No notes yet. Add one above!</p>
+                    <% } %>
+                </div>
+
+                <!-- Your Study Tasks Card -->
+                <div class="card dashboard-card-task">
+                    <h3><span class="material-icons-outlined">assignment_turned_in</span> Your Study Tasks</h3>
+                    <form action="/add-task" method="POST" class="add-task-form">
+                        <div class="form-group">
+                            <input type="text" name="description" placeholder="Task description" required>
+                        </div>
+                        <button type="submit" class="button">
+                            <span class="material-icons-outlined" style="font-size: 1.2rem; margin-right: 5px;">add</span>
+                            Add Task
+                        </button>
+                    </form>
+                    <% if (tasks && tasks.length > 0) { %>
+                        <ul class="item-list" style="margin-top: 1.5rem;">
+                            <% tasks.forEach(task => { %>
+                                <li class="<%= task.completed ? 'completed' : '' %>">
+                                    <div class="task-item-content">
+                                        <form action="/toggle-task" method="POST" style="display:inline-block;">
+                                            <input type="hidden" name="id" value="<%= task.id %>">
+                                            <input type="hidden" name="completed" value="<%= !task.completed %>">
+                                            <input type="checkbox" onchange="this.form.submit()" <%= task.completed ? 'checked' : '' %>>
+                                        </form>
+                                        <span><%= task.description %></span>
+                                    </div>
+                                    <form action="/delete-task" method="POST" style="margin-left: auto;">
+                                        <input type="hidden" name="id" value="<%= task.id %>">
+                                        <button type="submit" class="delete-btn" title="Delete Task">
+                                            <span class="material-icons-outlined">delete_outline</span>
+                                        </button>
+                                    </form>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <p class="text-light" style="margin-top: 1.5rem;">No tasks yet. Add one above!</p>
+                    <% } %>
+                </div>
+
+                <!-- Study Analytics Card (Placeholder) -->
+                <div class="card dashboard-card-analytics">
+                    <h3><span class="material-icons-outlined">analytics</span> Study Analytics</h3>
+                    <p>Interactive charts and insights into your study habits will appear here.</p>
+                    <p class="text-light">Coming Soon!</p>
+                </div>
+
+                <!-- Community & Help Card (Placeholder) -->
+                <div class="card dashboard-card-community">
+                    <h3><span class="material-icons-outlined">diversity_3</span> Community & Help</h3>
+                    <p>Connect with peers and teachers for support and collaboration.</p>
+                    <p class="text-light">Forum and messaging features in development.</p>
+                </div>
+
+            </div>
+        </main>
+    
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Study Flow. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="/script.js"></script>
+</body>
+</html>

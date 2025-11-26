@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/admin-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            --admin-primary: #2563eb;
+            --admin-secondary: #7c3aed;
+            --admin-success: #10b981;
+            --admin-warning: #f59e0b;
+            --admin-danger: #ef4444;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .admin-logo {
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-logo h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-nav {
+            padding: 0 1rem;
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .admin-nav-item:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            color: var(--admin-primary);
+            transform: translateX(5px);
+        }
+
+        .admin-nav-item.active {
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            color: white;
+        }
+
+        .admin-nav-item .material-icons-outlined {
+            margin-right: 12px;
+            font-size: 1.5rem;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header h1 {
+            margin: 0 0 0.5rem 0;
+            color: #1e293b;
+            font-size: 2rem;
+        }
+
+        .admin-header p {
+            margin: 0;
+            color: #64748b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+        }
+
+        .admin-table thead th {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            padding: 1rem;
+            text-align: left;
+            color: #1e293b;
+            font-weight: 600;
+            border: none;
+        }
+
+        .admin-table tbody tr {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .admin-table tbody tr:hover {
+            transform: scale(1.02);
+        }
+
+        .admin-table td {
+            padding: 1rem;
+            border: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-student { background: #dbeafe; color: #1e40af; }
+        .badge-teacher { background: #d1fae5; color: #065f46; }
+        .badge-admin { background: #fce7f3; color: #9f1239; }
+        .badge-freelancer { background: #fef3c7; color: #92400e; }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-inactive { background: #fee2e2; color: #991b1b; }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--admin-danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--admin-success);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+
+            .admin-wrapper {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <span class="material-icons-outlined" style="font-size: 2rem; color: var(--admin-primary);">admin_panel_settings</span>
+                <h2>Admin Panel</h2>
+            </div>
+            
+            <nav class="admin-nav">
+                <a class="admin-nav-item active" data-section="overview">
+                    <span class="material-icons-outlined">dashboard</span>
+                    <span>Overview</span>
+                </a>
+                <a class="admin-nav-item" data-section="users">
+                    <span class="material-icons-outlined">people</span>
+                    <span>User Management</span>
+                </a>
+                <a class="admin-nav-item" data-section="questions">
+                    <span class="material-icons-outlined">help_outline</span>
+                    <span>Help-Me System</span>
+                </a>
+                <a class="admin-nav-item" data-section="materials">
+                    <span class="material-icons-outlined">library_books</span>
+                    <span>Platform Materials</span>
+                </a>
+                <a class="admin-nav-item" data-section="notifications">
+                    <span class="material-icons-outlined">notifications</span>
+                    <span>Notifications</span>
+                </a>
+                <a class="admin-nav-item" data-section="logs">
+                    <span class="material-icons-outlined">history</span>
+                    <span>Activity Logs</span>
+                </a>
+                <a class="admin-nav-item" data-section="analytics">
+                    <span class="material-icons-outlined">analytics</span>
+                    <span>Analytics</span>
+                </a>
+                <hr style="margin: 1rem 0; border: 1px solid #e2e8f0;">
+                <a href="/dashboard" class="admin-nav-item">
+                    <span class="material-icons-outlined">arrow_back</span>
+                    <span>Back to Dashboard</span>
+                </a>
+                <a href="/logout" class="admin-nav-item">
+                    <span class="material-icons-outlined">logout</span>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <div class="admin-header">
+                <h1>Welcome, <%= username %>!</h1>
+                <p>Super Admin Dashboard - Full System Control</p>
+            </div>
+
+            <!-- Overview Section -->
+            <div class="content-section active" id="overview-section">
+                <h2 style="margin-bottom: 1.5rem;">Platform Statistics</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+                                <span class="material-icons-outlined">people</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="stat-total-users">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                                <span class="material-icons-outlined">trending_up</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="stat-active-users">0</div>
+                        <div class="stat-label">Active Users (7 days)</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
+                                <span class="material-icons-outlined">description</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="stat-total-notes">0</div>
+                        <div class="stat-label">Total Notes</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                                <span class="material-icons-outlined">task</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="stat-total-tasks">0</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #db2777); color: white;">
+                                <span class="material-icons-outlined">help_outline</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="stat-total-questions">0</div>
+                        <div class="stat-label">Total Questions</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2); color: white;">
+                                <span class="material-icons-outlined">rate_review</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="stat-total-answers">0</div>
+                        <div class="stat-label">Total Answers</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div class="content-section" id="users-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="margin: 0;">User Management</h2>
+                    <button class="action-btn btn-primary" onclick="refreshUsers()">
+                        <span class="material-icons-outlined" style="vertical-align: middle; font-size: 1.2rem;">refresh</span>
+                        Refresh
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Notes</th>
+                                <th>Tasks</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 2rem;">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Questions Section -->
+            <div class="content-section" id="questions-section">
+                <h2 style="margin-bottom: 1.5rem;">Help-Me Question System</h2>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student</th>
+                                <th>Title</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Teacher</th>
+                                <th>Answers</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="questions-table-body">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 2rem;">Loading questions...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Replace the Materials Section in admin_dashboard.ejs with this -->
+            <!-- Materials Section -->
+            <div class="content-section" id="materials-section">
+                <h2 style="margin-bottom: 1.5rem;">Platform Materials Management</h2>
+                
+                <!-- Upload Form -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h3 style="margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <span class="material-icons-outlined">upload</span>
+                            Upload New Material
+                        </h3>
+                        <form id="material-form" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>Title *</label>
+                                <input type="text" name="title" required placeholder="Enter material title">
+                            </div>
+                            <div class="form-group">
+                                <label>Type *</label>
+                                <select name="type" id="material-type" required onchange="toggleMaterialFields()">
+                                    <option value="note">Text Note / Notice</option>
+                                    <option value="link">Link / Video URL</option>
+                                    <option value="document">Document / File Upload</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Text Content Field (for notes) -->
+                            <div class="form-group" id="content-field">
+                                <label>Content</label>
+                                <textarea name="content" rows="4" placeholder="Enter text content or notice..."></textarea>
+                            </div>
+                            
+                            <!-- Link URL Field -->
+                            <div class="form-group" id="link-field" style="display: none;">
+                                <label>Link URL</label>
+                                <input type="url" name="link_url" placeholder="https://example.com or YouTube URL">
+                            </div>
+                            
+                            <!-- File Upload Field -->
+                            <div class="form-group" id="file-field" style="display: none;">
+                                <label>Upload File (PDF, JPG, PNG - Max 10MB)</label>
+                                <input type="file" name="material_file" id="material-file-input" 
+                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.ppt,.pptx,.xls,.xlsx">
+                                <small style="color: #64748b; display: block; margin-top: 5px;">
+                                    Supported: PDF, Images (JPG, PNG), Word, PowerPoint, Excel
+                                </small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Target Group *</label>
+                                <select name="target_group" required>
+                                    <option value="all">All Users</option>
+                                    <option value="students">Students Only</option>
+                                    <option value="teachers">Teachers Only</option>
+                                    <option value="freelancers">Freelancers Only</option>
+                                    <option value="college">College Admins Only</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="action-btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                                <span class="material-icons-outlined" style="vertical-align: middle; margin-right: 5px;">cloud_upload</span>
+                                Upload Material
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Existing Materials List -->
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <span class="material-icons-outlined">folder</span>
+                                Uploaded Materials
+                            </h3>
+                            <button class="action-btn btn-primary" onclick="loadMaterials()" style="padding: 0.5rem 1rem;">
+                                <span class="material-icons-outlined" style="font-size: 1rem;">refresh</span>
+                            </button>
+                        </div>
+                        <div id="materials-list" style="max-height: 500px; overflow-y: auto;">
+                            <p style="text-align: center; color: #64748b;">Loading materials...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                /* Additional styles for file upload */
+                #material-file-input {
+                    padding: 0.75rem;
+                    border: 2px dashed #e2e8f0;
+                    border-radius: 8px;
+                    width: 100%;
+                    box-sizing: border-box;
+                    cursor: pointer;
+                    transition: border-color 0.3s ease;
+                }
+                
+                #material-file-input:hover {
+                    border-color: var(--admin-primary);
+                }
+                
+                .material-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 1rem;
+                    background: #f8fafc;
+                    border-radius: 8px;
+                    margin-bottom: 0.75rem;
+                    border: 1px solid #e2e8f0;
+                    transition: transform 0.2s ease;
+                }
+                
+                .material-item:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                }
+                
+                .material-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    flex-grow: 1;
+                }
+                
+                .material-icon-box {
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 1.3rem;
+                }
+                
+                .material-icon-box.note { background: linear-gradient(135deg, #10b981, #059669); }
+                .material-icon-box.link { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+                .material-icon-box.document { background: linear-gradient(135deg, #f59e0b, #d97706); }
+                
+                .material-details h4 {
+                    margin: 0 0 0.25rem 0;
+                    font-size: 1rem;
+                    color: #1e293b;
+                }
+                
+                .material-details p {
+                    margin: 0;
+                    font-size: 0.85rem;
+                    color: #64748b;
+                }
+                
+                .material-actions {
+                    display: flex;
+                    gap: 0.5rem;
+                }
+                
+                .material-actions button {
+                    padding: 0.4rem 0.8rem;
+                    font-size: 0.85rem;
+                }
+            </style>
+
+            <!-- Notifications Section -->
+            <div class="content-section" id="notifications-section">
+                <h2 style="margin-bottom: 1.5rem;">Send Notifications</h2>
+                <form id="notification-form" style="max-width: 600px;">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea name="message" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Target</label>
+                        <select name="target_type" required>
+                            <option value="all">All Users</option>
+                            <option value="students">Students</option>
+                            <option value="teachers">Teachers</option>
+                            <option value="specific">Specific Users (by ID)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>User IDs (comma-separated, for specific users)</label>
+                        <input type="text" name="target_ids">
+                    </div>
+                    <button type="submit" class="action-btn btn-primary">Send Notification</button>
+                </form>
+            </div>
+
+            <!-- Logs Section -->
+            <div class="content-section" id="logs-section">
+                <h2 style="margin-bottom: 1.5rem;">Activity Logs</h2>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Admin</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-table-body">
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 2rem;">Loading logs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="content-section" id="analytics-section">
+                <h2 style="margin-bottom: 1.5rem;">Platform Analytics</h2>
+                <p style="color: #64748b;">Advanced analytics charts and reports will be displayed here.</p>
+                <div style="background: white; border-radius: 12px; padding: 2rem; margin-top: 1rem;">
+                    <h3>Coming Soon:</h3>
+                    <ul style="color: #64748b; line-height: 2;">
+                        <li>User growth charts</li>
+                        <li>Activity heatmaps</li>
+                        <li>Revenue tracking</li>
+                        <li>Question/Answer statistics</li>
+                        <li>Content engagement metrics</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="edit-user-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-top: 0;">Edit User</h2>
+            <form id="edit-user-form">
+                <input type="hidden" id="edit-user-id">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="edit-username" readonly style="background: #f1f5f9;">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="edit-email" readonly style="background: #f1f5f9;">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="edit-role" required>
+                        <option value="student">Student</option>
+                        <option value="freelancer">Freelancer</option>
+                        <option value="teacher">Junior Teacher</option>
+                        <option value="college">College Admin</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="action-btn btn-primary">Save Changes</button>
+                    <button type="button" class="action-btn btn-danger" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/admin-script.js"></script>
+</body>
+</html>

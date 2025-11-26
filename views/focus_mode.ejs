@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" id="html-tag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Mode - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CORRECTED: Changed 'Material_Icons_Outlined' to 'Material+Icons+Outlined' -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <audio id="session-complete-audio" src="/audio/chime.mp3" preload="auto"></audio>
+    <div class="dashboard-wrapper" id="dashboard-wrapper">
+        <%- include('partials/sidebar', { currentPage: 'focus-mode', username: username }) %>
+        <main class="main-content">
+            <h1 class="page-title"><span class="material-icons-outlined">timer</span> Focus Mode</h1>
+            <div class="illustration-header">
+                <!-- Ensure this image file exists in public/images/student_working.svg -->
+                <img src="/images/student-working.svg" alt="Student working" class="header-illustration">
+                <div class="header-text">
+                    <h2>Boost Your Productivity!</h2>
+                    <p>Use the Pomodoro timer, background music, and stay focused.</p>
+                </div>
+            </div>
+
+            <div class="focus-mode-container">
+                <div class="focus-main-card">
+                    
+                    <div class="timer-section-redesigned">
+                        <!-- Preset Duration Buttons -->
+                        <div class="preset-durations">
+                            <button class="button small-btn secondary-btn preset-btn" data-duration="25">25 min</button>
+                            <button class="button small-btn secondary-btn preset-btn" data-duration="45">45 min</button>
+                            <button class="button small-btn secondary-btn preset-btn" data-duration="60">60 min</button>
+                        </div>
+
+                        <div class="timer-circle-container">
+                            <svg class="progress-ring" width="100%" height="100%">
+                                <circle class="progress-ring-track" stroke-width="8" fill="transparent" r="45%" cx="50%" cy="50%"/>
+                                <circle class="progress-ring-progress" stroke-width="8" fill="transparent" r="45%" cx="50%" cy="50%"/>
+                            </svg>
+                            <div class="timer-display-redesigned">
+                                <span id="minutes">25</span>:<span id="seconds">00</span>
+                                <button class="info-button"><span class="material-icons-outlined">info</span></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Timer Controls -->
+                        <div class="timer-controls-redesigned">
+                            <button id="start-btn" class="button primary-btn">
+                                <span class="material-icons"></span> Start
+                            </button>
+                            <button id="pause-btn" class="button secondary-btn" style="display: none;">
+                                <span class="material-icons"></span> Pause
+                            </button>
+                            <button id="reset-btn" class="button danger-btn">
+                                <span class="material-icons"></span> Reset
+                            </button>
+                        </div>
+                        
+                        <div class="manual-duration-setting">
+                            <span>Or set custom duration:</span>
+                            <input type="number" id="focus-duration" value="25" min="1" max="120">
+                            <button id="set-duration-btn" class="button secondary-btn small-btn">Set</button>
+                        </div>
+
+                        <button id="fullscreen-btn" class="button full-screen-toggle-btn">
+                            <span class="material-icons-outlined">fullscreen</span> Enter Full Screen
+                        </button>
+                        <button id="exit-fullscreen-btn" class="button full-screen-toggle-btn" style="display:none;">
+                            <span class="material-icons-outlined">fullscreen_exit</span> Exit Full Screen
+                        </button>
+                    </div>
+
+                    <!-- Focus Insights Section -->
+                    <div class="focus-insights-section">
+                        <h4><span class="material-icons-outlined">insights</span> Focus Insights</h4>
+                        <div class="insights-grid">
+                            <div class="insight-box">
+                                <span class="material-icons-outlined">check_circle_outline</span>
+                                <p>Sessions Today</p>
+                                <span id="sessions-today">0</span>
+                            </div>
+                            <div class="insight-box">
+                                <span class="material-icons-outlined">av_timer</span>
+                                <p>Total Hours</p>
+                                <span id="total-focus-hours">0.0</span>
+                            </div>
+                            <div class="insight-box">
+                                <span class="material-icons-outlined">local_fire_department</span>
+                                <p>Current Streak</p>
+                                <span id="current-streak">0 days</span>
+                            </div>
+                            <div class="insight-box">
+                                <span class="material-icons-outlined">access_time</span>
+                                <p>Last Focused</p>
+                                <span id="last-focused">Never</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Background Music Section -->
+                    <div class="music-section-redesigned">
+                        <div class="card-header">
+                            <h4><span class="material-icons-outlined">music_note</span> Background Music Controls</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="music-control-group">
+                                <button id="play-white-noise-btn" class="button small-btn primary-btn">
+                                    <span class="material-icons-outlined">hearing</span> Play White Noise
+                                </button>
+                                <button id="stop-white-noise-btn" class="button small-btn secondary-btn" style="display: none;">
+                                    <span class="material-icons-outlined">volume_off</span> Stop White Noise
+                                </button>
+                                <audio id="white-noise-audio" loop src="/audio/white-noise.mp3" preload="auto"></audio>
+                            </div>
+        
+                            <p class="youtube-prompt">Or enter a YouTube video link:</p>
+                            <div class="youtube-input-group">
+                                <input type="text" id="youtube-link-input" placeholder="Enter YouTube Video URL">
+                                <button id="load-youtube-btn" class="button small-btn primary-btn">
+                                    <span class="material-icons-outlined">play_circle</span> Load & Play
+                                </button>
+                            </div>
+                            <div id="youtube-player" class="youtube-player-embed" style="display: none;"></div>
+                            <p class="text-light" style="font-size: 0.9em; margin-top: 10px;">
+                                Note: Some YouTube videos may not play due to embedding restrictions.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <a href="/dashboard" class="button secondary-btn">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('partials/footer') %>
+
+    <!-- Session Complete Notification Popup -->
+    <div id="notification-popup" class="notification-popup">
+        <span class="material-icons-outlined notification-icon">celebration</span>
+        <div class="notification-content">
+            <h3>🎉 Session Complete!</h3>
+            <p>Take a well-deserved break!</p>
+            <button id="dismiss-notification" class="button">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="/focus-mode-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask a Question - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { currentPage: 'ask-a-question', username: username }) %>
+        <main class="main-content">
+            <h1><span class="material-icons-outlined" style="font-size: 2.5rem; vertical-align: middle; margin-right: 10px;">forum</span> Ask a Question</h1>
+            <div class="card">
+                <h3>Connect with Peers and Teachers</h3>
+                <p>Post your questions, get help from the community, and share your knowledge.</p>
+                <div style="margin-top: 20px;">
+                    <p class="text-light">This feature is under development. A full forum or Q&A system will be implemented here.</p>
+                    <a href="/dashboard" class="button secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('partials/footer') %>
+    <script src="/script.js"></script>
+</body>
+</html>

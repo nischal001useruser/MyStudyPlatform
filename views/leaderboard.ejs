@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { currentPage: 'leaderboard', username: username }) %>
+        <main class="main-content">
+            <h1><span class="material-icons-outlined" style="font-size: 2.5rem; vertical-align: middle; margin-right: 10px;">leaderboard</span> Leaderboard</h1>
+            <div class="card">
+                <h3>See How You Compare!</h3>
+                <p>Track your progress against other students and earn badges for your achievements.</p>
+                <div style="margin-top: 20px;">
+                    <p class="text-light">Points, ranks, and achievements will be displayed here.</p>
+                    <a href="/dashboard" class="button secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('partials/footer') %>
+    <script src="/script.js"></script>
+</body>
+</html>

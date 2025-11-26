@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes & Materials - Study Flow</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        .notes-page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-medium);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab:hover {
+            color: var(--primary-color);
+        }
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Main grid for the entire page */
+        .notes-materials-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        /* Form card - consistent width */
+        .form-card {
+            background: var(--background-card);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Materials display section */
+        .materials-section {
+            background: var(--background-card);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            border: 1px solid var(--border-color);
+        }
+        
+        .materials-section h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+        }
+        
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .material-card {
+            background: var(--background-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-height: 200px;
+        }
+        .material-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
+        .material-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .material-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        .material-icon .material-icons-outlined {
+            font-size: 2rem;
+        }
+        .material-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        .material-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0 0 0.5rem 0;
+            word-break: break-word;
+            color: var(--text-dark);
+        }
+        .material-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .material-content {
+            flex-grow: 1;
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            line-height: 1.5;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .material-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+        .material-actions .button {
+            flex: 1;
+            padding: 0.6rem;
+            font-size: 0.9rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+        .file-badge {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+        .link-preview {
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            word-break: break-all;
+        }
+        .link-preview:hover {
+            text-decoration: underline;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+        .empty-state .material-icons-outlined {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+            .tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { currentPage: 'notes-materials', username: username }) %>
+        <main class="main-content">
+            <h1><span class="material-icons-outlined" style="font-size: 2.5rem; vertical-align: middle; margin-right: 10px;">description</span> Notes & Materials</h1>
+            
+            <div class="notes-page-container">
+                <div class="notes-materials-layout">
+                    
+                    <!-- Form Card -->
+                    <div class="form-card">
+                        <h3>Organize Your Learning Resources</h3>
+                        <p>Create text notes, upload study materials (PDF, JPG, PNG), and save useful links.</p>
+
+                        <!-- Tabs -->
+                        <div class="tabs">
+                            <button class="tab active" onclick="switchTab('text')">
+                                <span class="material-icons-outlined" style="vertical-align: middle; margin-right: 5px;">note</span>
+                                Text Notes
+                            </button>
+                            <button class="tab" onclick="switchTab('file')">
+                                <span class="material-icons-outlined" style="vertical-align: middle; margin-right: 5px;">upload_file</span>
+                                Upload Files
+                            </button>
+                            <button class="tab" onclick="switchTab('link')">
+                                <span class="material-icons-outlined" style="vertical-align: middle; margin-right: 5px;">link</span>
+                                Add Links
+                            </button>
+                        </div>
+
+                        <!-- Text Note Tab -->
+                        <div id="text-tab" class="tab-content active">
+                            <form action="/add-note" method="POST" class="add-note-form">
+                                <div class="form-group">
+                                    <label for="note-title">Note Title</label>
+                                    <input type="text" id="note-title" name="title" placeholder="Enter note title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="note-content">Content</label>
+                                    <textarea id="note-content" name="content" placeholder="Write your notes here..." rows="5"></textarea>
+                                </div>
+                                <button type="submit" class="button">
+                                    <span class="material-icons-outlined" style="font-size: 1.2rem; margin-right: 5px;">add</span>
+                                    Add Note
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- File Upload Tab -->
+                        <div id="file-tab" class="tab-content">
+                            <form action="/upload-file" method="POST" enctype="multipart/form-data" class="add-note-form">
+                                <div class="form-group">
+                                    <label for="file-title">Title (Optional)</label>
+                                    <input type="text" id="file-title" name="title" placeholder="Enter a custom title for this file">
+                                </div>
+                                <div class="form-group">
+                                    <label for="file-upload">Upload File (PDF, JPG, PNG - Max 10MB)</label>
+                                    <input type="file" id="file-upload" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
+                                </div>
+                                <button type="submit" class="button">
+                                    <span class="material-icons-outlined" style="font-size: 1.2rem; margin-right: 5px;">upload</span>
+                                    Upload File
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Link Tab -->
+                        <div id="link-tab" class="tab-content">
+                            <form action="/add-link" method="POST" class="add-note-form">
+                                <div class="form-group">
+                                    <label for="link-title">Link Title</label>
+                                    <input type="text" id="link-title" name="title" placeholder="Enter a descriptive title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="link-url">URL</label>
+                                    <input type="url" id="link-url" name="link_url" placeholder="https://example.com" required>
+                                </div>
+                                <button type="submit" class="button">
+                                    <span class="material-icons-outlined" style="font-size: 1.2rem; margin-right: 5px;">add_link</span>
+                                    Save Link
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Display All Materials -->
+                    <div class="materials-section">
+                        <h3>Your Materials</h3>
+                        
+                        <% if (notes && notes.length > 0) { %>
+                            <div class="materials-grid">
+                                <% notes.forEach(note => { %>
+                                    <div class="material-card">
+                                        <div class="material-header">
+                                            <div class="material-icon" style="background: <%= note.type === 'text' ? '#4CAF50' : note.type === 'file' ? '#FF9800' : '#2196F3' %>;">
+                                                <span class="material-icons-outlined">
+                                                    <%= note.type === 'text' ? 'note' : note.type === 'file' ? 'description' : 'link' %>
+                                                </span>
+                                            </div>
+                                            <div class="material-info">
+                                                <h4 class="material-title">
+                                                    <%= note.title %>
+                                                    <% if (note.type === 'file' && note.file_type) { %>
+                                                        <span class="file-badge"><%= note.file_type %></span>
+                                                    <% } %>
+                                                </h4>
+                                                <div class="material-meta">
+                                                    <%= new Date(note.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <% if (note.type === 'text' && note.content) { %>
+                                            <div class="material-content">
+                                                <%= note.content.substring(0, 100) %><%= note.content.length > 100 ? '...' : '' %>
+                                            </div>
+                                        <% } %>
+
+                                        <% if (note.type === 'link' && note.link_url) { %>
+                                            <a href="<%= note.link_url %>" target="_blank" class="link-preview">
+                                                <span class="material-icons-outlined" style="font-size: 1rem;">open_in_new</span>
+                                                <%= note.link_url.substring(0, 50) %><%= note.link_url.length > 50 ? '...' : '' %>
+                                            </a>
+                                        <% } %>
+
+                                        <div class="material-actions">
+                                            <% if (note.type === 'file') { %>
+                                                <a href="/download-file/<%= note.id %>" class="button" style="text-decoration: none;">
+                                                    <span class="material-icons-outlined" style="font-size: 1rem;">download</span>
+                                                    Download
+                                                </a>
+                                            <% } %>
+                                            <% if (note.type === 'link') { %>
+                                                <a href="<%= note.link_url %>" target="_blank" class="button" style="text-decoration: none;">
+                                                    <span class="material-icons-outlined" style="font-size: 1rem;">open_in_new</span>
+                                                    Open
+                                                </a>
+                                            <% } %>
+                                            <form action="/delete-note" method="POST" style="flex: 1;">
+                                                <input type="hidden" name="id" value="<%= note.id %>">
+                                                <button type="submit" class="button secondary" style="width: 100%;" onclick="return confirm('Are you sure you want to delete this?')">
+                                                    <span class="material-icons-outlined" style="font-size: 1rem;">delete</span>
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <div class="empty-state">
+                                <span class="material-icons-outlined">folder_open</span>
+                                <p>You haven't added any notes or materials yet.</p>
+                                <p style="font-size: 0.9rem;">Use the tabs above to get started!</p>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                </div>
+            </div>
+        </main>
+    </div>
+    <%- include('partials/footer') %>
+    
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.closest('.tab').classList.add('active');
+        }
+    </script>
+    <script src="/script.js"></script>
+</body>
+</html>
